@@ -1,12 +1,5 @@
-﻿//
-//	Created by jiadong chen
-//	http://www.chenjd.me
-//  用来在gpu上实现集群效果
-//
+﻿#pragma kernel CSMain
 
-#pragma kernel CSMain
-
-//封装计算单个boid时所需要的数据
 struct Boid
 {
 	float3 pos;
@@ -42,8 +35,6 @@ void CSMain (uint3 id : SV_DispatchThreadID)
     float tempSpeed = 0;
 	uint nearbyCount = 0;
 
-
-	[loop]
 	for (int i = 0; i < int(boid.boidsCount); i++)
 	{
 		if (i != int(id.x))

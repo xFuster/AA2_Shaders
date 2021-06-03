@@ -1,14 +1,8 @@
-﻿//
-//  Created by jiadong chen
-//  http://www.chenjd.me
-//
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GPUFlock : MonoBehaviour {
-
-    #region 字段
 
     public ComputeShader cshader;
 
@@ -22,10 +16,6 @@ public class GPUFlock : MonoBehaviour {
 
     private Vector3 targetPos = Vector3.zero;
     private int kernelHandle;
-
-    #endregion
-
-    #region 方法
 
     void Start()
     {
@@ -97,8 +87,4 @@ public class GPUFlock : MonoBehaviour {
 
         }
     }
-
-
-    #endregion
-
 }
