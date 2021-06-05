@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Silver
+  m_Shader: {fileID: 4800000, guid: be40601e79db08b489a9debc53989d46, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _texture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _ambientInt: 0.615
+    - _diffuseInt: 0.321
+    - _directionalLightIntensity: 1
+    - _metallicness: 0.94
+    - _scecularExp: 2.09
+    - _smoothness: 0.114
+    m_Colors:
+    - _ambientColor: {r: 0.80392164, g: 0.80392164, b: 0.80392164, a: 1}
+    - _directionalLightColor: {r: 1, g: 0.9198113, b: 0.9198113, a: 1}
+    - _directionalLightDir: {r: 4.55, g: 2.57, b: 0, a: 1}

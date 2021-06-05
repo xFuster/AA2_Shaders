@@ -24,7 +24,6 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile __ POINT_LIGHT_ON 
 			#pragma multi_compile __ DIRECTIONAL_LIGHT_ON
 			#include "UnityCG.cginc"
 
@@ -128,15 +127,16 @@
 				dotVH = dot(viewVec, halfVec);
 				dotVH = dotVH * dotVH;
 				geometry = dotNL * dotNV / dotVH;
-				specularComp = lightColor * clamp(dot(lightDir, i.worldNormal), 0, 1) * ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
+				specularComp = ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
+				//specularComp = lightColor * clamp(dot(lightDir, i.worldNormal), 0, 1) * ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
 				//
 				//Sum
 				finalColor += clamp(float4(_directionalLightIntensity * (difuseComp + specularComp),1),0,1);
 				fixed4 outTexture = tex2D(_texture, i.uv);
 				 //pointLight
 
-				return ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
-				 return finalColor * outTexture;
+				//return ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
+				return finalColor * outTexture;
 			 }
 			 ENDCG
 		 }
