@@ -17,21 +17,34 @@
 	}
 		SubShader
 	{
-		Tags { "RenderType" = "Opaque" }
+		Tags { "RenderType" = "Opaque" "IgnoreProjector" = "True" "RenderPipeline" = "UniversalPipeline" }
+		LOD 300
 
 		Pass
 		{
+			Tags { "LightMode" = "UniversalForward" }
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile __ DIRECTIONAL_LIGHT_ON
+			#pragma shader_feature _ALPHATEST_ON
+			#pragma shader_feature _ALPHAPREMULTIPLY_ON
+
+			 // -------------------------------------
+			 // Unity defined keywords
+			#pragma multi_compile_fog
+			#pragma multi_compile_instancing
 			#include "UnityCG.cginc"
+			//#include "Packages/com.unity.render-pipelines.universal/Shaders/UnlitInput.hlsl"
+			//#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
 			struct appdata
 			{
 				float4 vertex : POSITION;
 				float2 uv : TEXCOORD0;
 				float3 normal : NORMAL;
+				float4 tangent    : TANGENT;
+				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
 			struct v2f
@@ -40,6 +53,10 @@
 				float4 vertex : SV_POSITION;
 				float3 worldNormal : TEXCOORD1;
 				float3 wPos : TEXCOORD2;
+				float4 shadowCoord : TEXCOORD3;
+
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+					UNITY_VERTEX_OUTPUT_STEREO
 			};
 
 			sampler2D _texture;
@@ -48,10 +65,14 @@
 			v2f vert(appdata v)
 			{
 				v2f o;
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _texture);
 				o.uv = v.uv;
 				o.worldNormal = UnityObjectToWorldNormal(v.normal);
+
 				o.wPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 				return o;
 			}
