@@ -20,17 +20,17 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _texture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 4c29c1a1b1496934ca8baf54d0eeed08, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _ambientInt: 0.25
+    - _ambientInt: 1
     - _diffuseInt: 1
     - _directionalLightIntensity: 1
     - _metallicness: 0.5
     - _scecularExp: 2
     - _smoothness: 0.5
     m_Colors:
-    - _ambientColor: {r: 0, g: 0, b: 0, a: 1}
+    - _ambientColor: {r: 0.6666667, g: 0.36862746, b: 0.20784315, a: 1}
     - _directionalLightColor: {r: 0, g: 0, b: 0, a: 1}
     - _directionalLightDir: {r: 0, g: 1, b: 0, a: 1}
