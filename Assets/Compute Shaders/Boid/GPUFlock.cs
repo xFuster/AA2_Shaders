@@ -13,22 +13,25 @@ public class GPUFlock : MonoBehaviour {
     public GPUBoid[] boidsData;
     public float flockSpeed;
     public float nearbyDis;
+    public Transform[] checkPoints;
 
     private Vector3 targetPos = Vector3.zero;
     private int kernelHandle;
+    
 
     void Start()
     {
-        this.boidsGo = new GameObject[this.boidsCount];
-        this.boidsData = new GPUBoid[this.boidsCount];
-        this.kernelHandle = cshader.FindKernel("CSMain");
+        boidsGo = new GameObject[boidsCount];
+        boidsData = new GPUBoid[boidsCount];
+        kernelHandle = cshader.FindKernel("CSMain");
+        checkPoints = new Transform[4];
 
 
         for (int i = 0; i < this.boidsCount; i++)
         {
-            this.boidsData[i] = this.CreateBoidData();
-            this.boidsGo[i] = Instantiate(boidPrefab, this.boidsData[i].pos, Quaternion.Euler(this.boidsData[i].rot)) as GameObject;
-            this.boidsData[i].rot = this.boidsGo[i].transform.forward;
+            boidsData[i] = this.CreateBoidData();
+            boidsGo[i] = Instantiate(boidPrefab, this.boidsData[i].pos, Quaternion.Euler(this.boidsData[i].rot)) as GameObject;
+            boidsData[i].rot = this.boidsGo[i].transform.forward;
         }
     }
 
@@ -48,14 +51,20 @@ public class GPUFlock : MonoBehaviour {
 
     void Update()
     {
+        //if(targetPos == checkPoints[0].transform.position)
+        //{
+        //    Mathf.Lerp(targetPos.x, checkPoints[1].transform.position.x, 5.0f);
+        //    Mathf.Lerp(targetPos.x, checkPoints[1].transform.position.x, 5.0f);
 
-        this.targetPos += new Vector3(2f, 5f, 3f);
-        this.transform.localPosition += new Vector3(
-            (Mathf.Sin(Mathf.Deg2Rad * this.targetPos.x) * -0.2f),
-            (Mathf.Sin(Mathf.Deg2Rad * this.targetPos.y) * 0.2f),
-            (Mathf.Sin(Mathf.Deg2Rad * this.targetPos.z) * 0.2f)
+        //}
+        /*
+        targetPos += new Vector3(2f, 5f, 3f);
+        transform.localPosition += new Vector3(
+            (Mathf.Sin(Time.deltaTime * this.targetPos.x) * -0.2f),
+            (Mathf.Sin(Time.deltaTime * this.targetPos.y) * 0.2f),
+            (Mathf.Sin(Time.deltaTime * this.targetPos.z) * 0.2f)
         );
-
+        */
 
         ComputeBuffer buffer = new ComputeBuffer(boidsCount, 48);
 

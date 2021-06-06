@@ -9,13 +9,6 @@
 		 _diffuseInt("Diffuse int", Range(0,1)) = 1
 		_scecularExp("Specular exponent",Float) = 2.0
 
-
-			 //borrar
-		_directionalLightDir("Directional light Dir",Vector) = (0,1,0,1)
-		_directionalLightColor("Directional light Color",Color) = (0,0,0,1)
-		_directionalLightIntensity("Directional light Intensity",Float) = 1
-			 //end borrar
-
 		_metallicness("MetallicParam", Range(0,1)) = 0.5
 		_smoothness("SmoothParam", Range(0,1)) = 0.5
 	}
@@ -102,8 +95,6 @@
 				float3 halfVec;
 				float3 difuseComp = float4(0, 0, 0, 1);
 				float3 specularComp = float4(0, 0, 0, 1);
-				float3 lightColor;
-				float3 lightDir;
 				float fresnel;
 				float aa;
 				float dotV;
@@ -126,26 +117,21 @@
 				half DistanceAtten = mainLight.distanceAttenuation;
 				half ShadowAtten = mainLight.shadowAttenuation;
 
-				// Sustituir las funciones de light estas por las de arriba
-
-				return half4(Color, 1) * DistanceAtten * ShadowAtten;
-
-				// declarar aqui las variables que se utilicen en ambos lados
 				//Directional light properties
-				lightColor = _directionalLightColor.xyz;
-				lightDir = normalize(_directionalLightDir);
+				Color = _directionalLightColor.xyz;
+				Direction = normalize(_directionalLightDir);
 
 				//Diffuse componenet
-				difuseComp = lightColor * _diffuseInt * clamp(dot(lightDir, i.worldNormal),0,1);	
+				difuseComp = Color * _diffuseInt * clamp(dot(Direction, i.worldNormal),0,1);
 
 				//Specular component	
 				viewVec = normalize(_WorldSpaceCameraPos - i.wPos);
 				
 				//blinnPhong
-				halfVec = normalize(viewVec + lightDir);
+				halfVec = normalize(viewVec + Direction);
 
 				//Fresnel formula
-				fresnel = pow((_metallicness + (1.0 - _metallicness) * (1.0 - dot(lightDir, i.worldNormal))), 5.0);
+				fresnel = pow((_metallicness + (1.0 - _metallicness) * (1.0 - dot(Direction, i.worldNormal))), 5.0);
 
 				//Distribution formula
 				aa = _smoothness * _smoothness;
@@ -154,12 +140,12 @@
 				distribution = aa / (3.141592f * pow(((dotV * (aa - 1.0f) + 1.0f)), 2.0f));
 
 				//Geometry formula
-				dotNL = dot(i.worldNormal, lightDir);
+				dotNL = dot(i.worldNormal, Direction);
 				dotNV = dot(i.worldNormal, viewVec);
 				dotVH = dot(viewVec, halfVec);
 				dotVH = dotVH * dotVH;
 				geometry = dotNL * dotNV / dotVH;
-				specularComp = ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
+				specularComp = ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, Direction) * dot(i.worldNormal, viewVec)));
 				//specularComp = lightColor * clamp(dot(lightDir, i.worldNormal), 0, 1) * ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
 				//
 				//Sum
@@ -168,7 +154,7 @@
 				 //pointLight
 
 				//return ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
-				return finalColor * outTexture;
+				return finalColor * outTexture * DistanceAtten * ShadowAtten;
 			 }
 			 ENDHLSL
 		 }
