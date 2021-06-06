@@ -131,7 +131,7 @@
 				//
 				//Sum
 				finalColor += clamp(float4(_directionalLightIntensity * (difuseComp + specularComp),1),0,1);
-				fixed4 outTexture = tex2D(_texture, i.uv);
+				fixed4 outTexture = tex2D(_texture, i.uv * _texture_ST);
 				 //pointLight
 
 				//return ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
