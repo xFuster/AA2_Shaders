@@ -1,4 +1,4 @@
-﻿Shader "Unlit/PBR"
+﻿Shader "Unlit/PBR_Shadow"
 {
 	Properties
 	{
@@ -9,24 +9,35 @@
 		 _diffuseInt("Diffuse int", Range(0,1)) = 1
 		_scecularExp("Specular exponent",Float) = 2.0
 
-		//Quitar esto
+
+			 //borrar
 		_directionalLightDir("Directional light Dir",Vector) = (0,1,0,1)
 		_directionalLightColor("Directional light Color",Color) = (0,0,0,1)
 		_directionalLightIntensity("Directional light Intensity",Float) = 1
+			 //end borrar
+
 		_metallicness("MetallicParam", Range(0,1)) = 0.5
 		_smoothness("SmoothParam", Range(0,1)) = 0.5
 	}
 		SubShader
 	{
-		Tags { "RenderType" = "Opaque" }
+		Tags{"RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline" "IgnoreProjector" = "True"}
 
 		Pass
 		{
-			CGPROGRAM
+			Tags{"LightMode" = "UniversalForward"}
+			HLSLPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile __ DIRECTIONAL_LIGHT_ON
-			#include "UnityCG.cginc"
+
+			//#include "UnityCG.cginc"
+			
+			//#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+			#pragma multi_compile  _MAIN_LIGHT_SHADOWS
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
 
 			struct appdata
 			{
@@ -45,20 +56,25 @@
 
 			sampler2D _texture;
 			float4 _texture_ST;
+			float4 ObjectToClipPos(float3 pos)
+			{
+				return mul(UNITY_MATRIX_VP, mul(UNITY_MATRIX_M, float4 (pos, 1)));
+			}
 
 			v2f vert(appdata v)
 			{
 				v2f o;
-				o.vertex = UnityObjectToClipPos(v.vertex);
+				o.vertex = ObjectToClipPos(v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _texture);
 				o.uv = v.uv;
-				o.worldNormal = UnityObjectToWorldNormal(v.normal);
+				o.worldNormal = TransformObjectToWorldNormal(v.normal);
 				o.wPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+				//TRANSFER_SHADOW(o)
 				return o;
 			}
 
 			float _ambientInt;//How strong it is?
-			fixed4 _ambientColor;
+			half4 _ambientColor;
 			float _diffuseInt;
 			float _scecularExp;
 
@@ -75,12 +91,12 @@
 			
 
 
-			fixed4 frag(v2f i) : SV_Target
+			half4 frag(v2f i) : SV_Target
 			{
 				//3 phong model light components
 				//We assign color to the ambient term		
-				fixed4 ambientComp = _ambientColor * _ambientInt;//We calculate the ambient term based on intensity
-				fixed4 finalColor = ambientComp;
+				half4 ambientComp = _ambientColor * _ambientInt;//We calculate the ambient term based on intensity
+				half4 finalColor = ambientComp;
 
 				float3 viewVec;
 				float3 halfVec;
@@ -97,6 +113,22 @@
 				float dotVH;
 				float geometry;
 				float lightDist;
+
+#if SHADOWS_SCREEN
+				half4 clipPos = TransformWorldToHClip(i.wPos);
+				half4 shadowCoord = ComputeScreenPos(i.vertex);
+#else
+				half4 shadowCoord = TransformWorldToShadowCoord(i.wPos);
+#endif
+				Light mainLight = GetMainLight(shadowCoord);
+				half3 Direction = mainLight.direction;
+				half3 Color = mainLight.color;
+				half DistanceAtten = mainLight.distanceAttenuation;
+				half ShadowAtten = mainLight.shadowAttenuation;
+
+				// Sustituir las funciones de light estas por las de arriba
+
+				return half4(Color, 1) * DistanceAtten * ShadowAtten;
 
 				// declarar aqui las variables que se utilicen en ambos lados
 				//Directional light properties
@@ -132,13 +164,13 @@
 				//
 				//Sum
 				finalColor += clamp(float4(_directionalLightIntensity * (difuseComp + specularComp),1),0,1);
-				fixed4 outTexture = tex2D(_texture, i.uv * _texture_ST);
+				half4 outTexture = tex2D(_texture, i.uv * _texture_ST);
 				 //pointLight
 
 				//return ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
 				return finalColor * outTexture;
 			 }
-			 ENDCG
+			 ENDHLSL
 		 }
 	}
 }
