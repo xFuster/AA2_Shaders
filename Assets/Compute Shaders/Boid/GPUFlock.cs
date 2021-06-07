@@ -4,94 +4,81 @@ using UnityEngine;
 
 public class GPUFlock : MonoBehaviour {
 
-    public ComputeShader cshader;
+    public struct BoidStruct
+    {
+        public Vector3 pos, rot, flockPos;
+        public float speed, nearbyDis, boidsCount;
+    }
 
-    public GameObject boidPrefab;
+    public ComputeShader computeShader;
+
+    public GameObject seagul;
     public int boidsCount;
     public float spawnRadius;
     public GameObject[] boidsGo;
-    public GPUBoid[] boidsData;
+    public BoidStruct[] boidsData;
     public float flockSpeed;
     public float nearbyDis;
-    public Transform[] checkPoints;
-
-    private Vector3 targetPos = Vector3.zero;
     private int kernelHandle;
     
 
     void Start()
     {
         boidsGo = new GameObject[boidsCount];
-        boidsData = new GPUBoid[boidsCount];
-        kernelHandle = cshader.FindKernel("CSMain");
-        checkPoints = new Transform[4];
+        boidsData = new BoidStruct[boidsCount];
+        kernelHandle = computeShader.FindKernel("CSMain");
 
 
-        for (int i = 0; i < this.boidsCount; i++)
+        for (int i = 0; i < boidsCount; i++)
         {
-            boidsData[i] = this.CreateBoidData();
-            boidsGo[i] = Instantiate(boidPrefab, this.boidsData[i].pos, Quaternion.Euler(this.boidsData[i].rot)) as GameObject;
-            boidsData[i].rot = this.boidsGo[i].transform.forward;
+            boidsData[i] = CreateBoidData();
+            boidsGo[i] = Instantiate(seagul, boidsData[i].pos, Quaternion.Euler(boidsData[i].rot)) as GameObject;
+            boidsData[i].rot = boidsGo[i].transform.forward;
         }
     }
 
-    GPUBoid CreateBoidData()
+    BoidStruct CreateBoidData()
     {
-        GPUBoid boidData = new GPUBoid();
+        BoidStruct boidData = new BoidStruct();
         Vector3 pos = transform.position + Random.insideUnitSphere * spawnRadius;
         Quaternion rot = Quaternion.Slerp(transform.rotation, Random.rotation, 0.3f);
         boidData.pos = pos;
         boidData.flockPos = transform.position;
-        boidData.boidsCount = this.boidsCount;
-        boidData.nearbyDis = this.nearbyDis;
-        boidData.speed = this.flockSpeed + Random.Range(-0.5f, 0.5f);
+        boidData.boidsCount = boidsCount;
+        boidData.nearbyDis = nearbyDis;
+        boidData.speed = flockSpeed + Random.Range(-0.5f, 0.5f);
 
         return boidData;
     }
 
     void Update()
     {
-        //if(targetPos == checkPoints[0].transform.position)
-        //{
-        //    Mathf.Lerp(targetPos.x, checkPoints[1].transform.position.x, 5.0f);
-        //    Mathf.Lerp(targetPos.x, checkPoints[1].transform.position.x, 5.0f);
-
-        //}
-        /*
-        targetPos += new Vector3(2f, 5f, 3f);
-        transform.localPosition += new Vector3(
-            (Mathf.Sin(Time.deltaTime * this.targetPos.x) * -0.2f),
-            (Mathf.Sin(Time.deltaTime * this.targetPos.y) * 0.2f),
-            (Mathf.Sin(Time.deltaTime * this.targetPos.z) * 0.2f)
-        );
-        */
-
         ComputeBuffer buffer = new ComputeBuffer(boidsCount, 48);
 
-        for (int i = 0; i < this.boidsData.Length; i++)
+        for (int i = 0; i < boidsData.Length; i++)
         {
-            this.boidsData[i].flockPos = this.transform.position;
+            boidsData[i].flockPos = transform.position;
         }
 
-        buffer.SetData(this.boidsData);
+        buffer.SetData(boidsData);
 
-        cshader.SetBuffer(this.kernelHandle, "boidBuffer", buffer);
-        cshader.SetFloat("deltaTime", Time.deltaTime);
+        computeShader.SetBuffer(kernelHandle, "boidBuffer", buffer);
+        computeShader.SetFloat("deltaTime", Time.deltaTime);
 
-        cshader.Dispatch(this.kernelHandle, this.boidsCount, 1, 1);
+        computeShader.Dispatch(kernelHandle, boidsCount, 1, 1);
 
-        buffer.GetData(this.boidsData);
+        buffer.GetData(boidsData);
 
         buffer.Release();
 
-        for (int i = 0; i < this.boidsData.Length; i++)
+        for (int i = 0; i < boidsData.Length; i++)
         {
 
-            this.boidsGo[i].transform.localPosition = this.boidsData[i].pos;
+            boidsGo[i].transform.localPosition = boidsData[i].pos;
 
-            if(!this.boidsData[i].rot.Equals(Vector3.zero))
+            if(!boidsData[i].rot.Equals(Vector3.zero))
             {
-                this.boidsGo[i].transform.rotation = Quaternion.LookRotation(this.boidsData[i].rot);
+                boidsGo[i].transform.rotation = Quaternion.LookRotation(boidsData[i].rot);
             }
 
         }
