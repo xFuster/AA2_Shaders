@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: sombras
-  m_Shader: {fileID: 4800000, guid: f515ec9c6cd53044f8f5c76b6fc2d6fe, type: 3}
+  m_Name: PBR_Shadow
+  m_Shader: {fileID: 4800000, guid: 2833720da63a1844bb718f44b5e4804c, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -20,17 +20,17 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _texture:
-        m_Texture: {fileID: 2800000, guid: 4c29c1a1b1496934ca8baf54d0eeed08, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 795e165fb41cd0b4cb2f8f18ae28403b, type: 3}
+        m_Scale: {x: 2, y: 2.4}
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _ambientInt: 1
-    - _diffuseInt: 1
+    - _diffuseInt: 0.2
     - _directionalLightIntensity: 1
-    - _metallicness: 0.5
+    - _metallicness: 0.3
     - _scecularExp: 2
-    - _smoothness: 0.5
+    - _smoothness: 0.6
     m_Colors:
-    - _ambientColor: {r: 0.6666667, g: 0.36862746, b: 0.20784315, a: 1}
+    - _ambientColor: {r: 1, g: 1, b: 1, a: 1}
     - _directionalLightColor: {r: 0, g: 0, b: 0, a: 1}
     - _directionalLightDir: {r: 0, g: 1, b: 0, a: 1}

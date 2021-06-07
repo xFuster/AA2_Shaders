@@ -7,8 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ea
-  m_Shader: {fileID: 4800000, guid: 72c318a9bd0502a4f9a713d024375cc5, type: 3}
+  m_Name: TriplanarMat
+  m_Shader: {fileID: -6465566751694194690, guid: d07dfe50bb8d1564b86287997a4a2a51,
+    type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -19,31 +20,19 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 4c29c1a1b1496934ca8baf54d0eeed08, type: 3}
+    - Texture2D_2AC3377A:
+        m_Texture: {fileID: 2800000, guid: d96e77ddbb0e441419f8219cb1a75b22, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
+    - Texture2D_8CD87639:
+        m_Texture: {fileID: 2800000, guid: 79fcd4556e1e7d84088c30e39e302f6a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _texture:
-        m_Texture: {fileID: 0}
+    - Texture2D_C2862AAE:
+        m_Texture: {fileID: 2800000, guid: 104e417ce1585844b85672bf1e8054af, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _AlphaClip: 0
-    - _Blend: 0
-    - _Cull: 2
-    - _Cutoff: 0.5
-    - _DstBlend: 0
-    - _QueueOffset: 0
-    - _SampleGI: 0
-    - _SrcBlend: 1
-    - _Surface: 0
-    - _ZWrite: 1
-    - _alphaCutout: 0.5
-    m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _ambientColor: {r: 1, g: 1, b: 1, a: 1}
+    - Vector1_2DD26599: 1.95
+    - Vector1_3B267C4E: 2.76
+    m_Colors: []
