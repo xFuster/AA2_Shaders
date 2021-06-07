@@ -1,0 +1,71 @@
+﻿#pragma kernel CSMain
+
+struct Boid
+{
+	float3 flockingPosicion;
+	float3 posicion;
+	float3 rotacion;
+	float distanceBetweeenFish;
+	float fishSpeed;
+	float fishNumber;
+};
+
+RWStructuredBuffer<Boid> boidBuffer;
+float deltaTime;
+
+
+[numthreads(128,1,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+	Boid boid = boidBuffer[id.x];
+
+	float3 pos = boid.posicion;
+	float3 rot = boid.rotacion;
+
+	//separation
+	float3 separation = float3(0.0, 0.0, 0.0);
+
+	//alignment
+	float3 alignment = float3(0.0, 0.0, 0.0);
+
+	//cohesion
+	float3 cohesion = boid.flockingPosicion;
+	float3 tempCohesion = float3(0.0, 0.0, 0.0);
+
+    float tempSpeed = 0;
+	uint nearbyCount = 0;
+
+	for (int i = 0; i < int(boid.fishNumber); i++)
+	{
+		if (i != int(id.x))
+		{
+			Boid tempBoid = boidBuffer[i];
+			if (length(boid.posicion - tempBoid.posicion) < boid.distanceBetweeenFish)
+			{
+				separation += boid.posicion - tempBoid.posicion;
+
+				alignment += tempBoid.rotacion;
+
+				tempCohesion += tempBoid.posicion;
+
+				nearbyCount++;
+			}
+		}
+	}
+
+	if (nearbyCount > 0)
+	{
+		alignment *= 1 / nearbyCount;
+		tempCohesion *= 1 / nearbyCount;
+	}
+
+    cohesion += tempCohesion;
+
+	float3 direction = alignment + separation + normalize(cohesion - boid.posicion);
+
+	boid.rotacion = lerp(boid.rotacion, normalize(direction), deltaTime * 4);
+
+	boid.posicion += boid.rotacion * boid.fishSpeed * deltaTime;
+
+	boidBuffer[id.x] = boid;
+}
