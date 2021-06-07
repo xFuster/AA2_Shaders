@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.446227, g: 0.4960131, b: 0.5745991, a: 1}
+  m_IndirectSpecularColor: {r: 0.45124978, g: 0.5009537, b: 0.5734865, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -236,13 +236,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7815959}
-  m_LocalRotation: {x: -0.21330036, y: 0.78401417, z: -0.3739555, w: -0.44719362}
+  m_LocalRotation: {x: -0.13656685, y: 0.8349823, z: -0.23942727, w: -0.4762653}
   m_LocalPosition: {x: 18.57, y: 45.72, z: -38.41}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 51, y: 239.4, z: 0}
+  m_LocalEulerAnglesHint: {x: 32, y: 239.4, z: 0}
 --- !u!1001 &55598041
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2779,10 +2779,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   computeShader: {fileID: 7200000, guid: 94eb23f4b69aca2478b16883b939bd98, type: 3}
-  seagul: {fileID: 55598043}
-  boidsCount: 100
+  fish: {fileID: 55598043}
+  fishBanc: []
+  numFish: 100
   spawnRadius: 1
-  boidsGo: []
   flockSpeed: 10
   nearbyDis: 1
 --- !u!1001 &699805733

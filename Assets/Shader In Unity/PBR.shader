@@ -9,10 +9,10 @@
 		 _diffuseInt("Diffuse int", Range(0,1)) = 1
 		_scecularExp("Specular exponent",Float) = 2.0
 
-		//Quitar esto
 		_directionalLightDir("Directional light Dir",Vector) = (0,1,0,1)
 		_directionalLightColor("Directional light Color",Color) = (0,0,0,1)
 		_directionalLightIntensity("Directional light Intensity",Float) = 1
+
 		_metallicness("MetallicParam", Range(0,1)) = 0.5
 		_smoothness("SmoothParam", Range(0,1)) = 0.5
 	}
@@ -61,10 +61,6 @@
 			fixed4 _ambientColor;
 			float _diffuseInt;
 			float _scecularExp;
-
-			float4 _pointLightPos;
-			float4 _pointLightColor;
-			float _pointLightIntensity;
 
 			float4 _directionalLightDir;
 			float4 _directionalLightColor;
@@ -128,14 +124,12 @@
 				dotVH = dotVH * dotVH;
 				geometry = dotNL * dotNV / dotVH;
 				specularComp = ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
-				//specularComp = lightColor * clamp(dot(lightDir, i.worldNormal), 0, 1) * ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
-				//
+
 				//Sum
 				finalColor += clamp(float4(_directionalLightIntensity * (difuseComp + specularComp),1),0,1);
 				fixed4 outTexture = tex2D(_texture, i.uv * _texture_ST);
 				 //pointLight
 
-				//return ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
 				return finalColor * outTexture;
 			 }
 			 ENDCG

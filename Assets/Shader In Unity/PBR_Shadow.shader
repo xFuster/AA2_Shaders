@@ -23,11 +23,8 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile __ DIRECTIONAL_LIGHT_ON
-
-			//#include "UnityCG.cginc"
-			
-			//#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
 			#pragma multi_compile  _MAIN_LIGHT_SHADOWS
+
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
@@ -49,6 +46,7 @@
 
 			sampler2D _texture;
 			float4 _texture_ST;
+
 			float4 ObjectToClipPos(float3 pos)
 			{
 				return mul(UNITY_MATRIX_VP, mul(UNITY_MATRIX_M, float4 (pos, 1)));
@@ -62,7 +60,6 @@
 				o.uv = v.uv;
 				o.worldNormal = TransformObjectToWorldNormal(v.normal);
 				o.wPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-				//TRANSFER_SHADOW(o)
 				return o;
 			}
 
@@ -70,14 +67,6 @@
 			half4 _ambientColor;
 			float _diffuseInt;
 			float _scecularExp;
-
-			float4 _pointLightPos;
-			float4 _pointLightColor;
-			float _pointLightIntensity;
-
-			float4 _directionalLightDir;
-			float4 _directionalLightColor;
-			float _directionalLightIntensity;
 
 			float _metallicness;
 			float _smoothness;
@@ -118,8 +107,8 @@
 				half ShadowAtten = mainLight.shadowAttenuation;
 
 				//Directional light properties
-				Color = _directionalLightColor.xyz;
-				Direction = normalize(_directionalLightDir);
+				Color = Color.xyz;
+				Direction = normalize(Direction);
 
 				//Diffuse componenet
 				difuseComp = Color * _diffuseInt * clamp(dot(Direction, i.worldNormal),0,1);
@@ -146,14 +135,11 @@
 				dotVH = dotVH * dotVH;
 				geometry = dotNL * dotNV / dotVH;
 				specularComp = ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, Direction) * dot(i.worldNormal, viewVec)));
-				//specularComp = lightColor * clamp(dot(lightDir, i.worldNormal), 0, 1) * ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
-				//
-				//Sum
-				finalColor += clamp(float4(_directionalLightIntensity * (difuseComp + specularComp),1),0,1);
-				half4 outTexture = tex2D(_texture, i.uv * _texture_ST);
-				 //pointLight
 
-				//return ((fresnel * distribution * geometry) / (4.0 * dot(i.worldNormal, lightDir) * dot(i.worldNormal, viewVec)));
+				//Sum
+				finalColor += clamp(float4(DistanceAtten * (difuseComp + specularComp),1),0,1);
+				half4 outTexture = tex2D(_texture, i.uv * _texture_ST);
+
 				return finalColor * outTexture * DistanceAtten * ShadowAtten;
 			 }
 			 ENDHLSL
